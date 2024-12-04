@@ -21,15 +21,50 @@ const ImageGrid: React.FC = () => {
         null
     ); // Track when to show "Result"
 
-    const handleFlip = (index: number) => {
-        if (flippedIndex === index) {
+    const handleFlip = (body: Payload) => {
+        if (flippedIndex === body.index) {
             // Unflip the card
             setFlippedIndex(null);
             setTimeout(() => setDelayedResultIndex(null), 350); // Minor delay before hiding the result
         } else {
             // Flip the new card
-            setFlippedIndex(index);
-            setTimeout(() => setDelayedResultIndex(index), 350); // Minor delay before showing the result
+            setFlippedIndex(body.index);
+            handleFormSubmit(body);
+            setTimeout(() => setDelayedResultIndex(body.index), 350); // Minor delay before showing the result
+        }
+    };
+
+    const handleChange = (value: number) => setSelectedValue(value);
+
+    const [response, setResponse] = useState<string | null>(null);
+    const [selectedValue, setSelectedValue] = useState<number>(1);
+    // const handleFormSubmit = (jsonData: string) => sendToAPI(jsonData);
+
+    type Payload = {
+        name: string;
+        index: number;
+    };
+    const handleFormSubmit = async (jsonData: Payload) => {
+        try {
+            console.log("Sent API call");
+            let body = JSON.stringify(jsonData);
+            // Assuming you have an API endpoint to handle the request
+            const res = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body,
+            });
+
+            const data = await res.json();
+
+            console.log("Received API call");
+            // Update the response state with the result from the API
+            setResponse(data.prediction); // Assuming the API returns a field named `prediction`
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            setResponse("Error occurred"); // In case of error
         }
     };
 
@@ -39,7 +74,7 @@ const ImageGrid: React.FC = () => {
                 <motion.div
                     key={index}
                     style={styles.card}
-                    onClick={() => handleFlip(index)}
+                    onClick={() => handleFlip({ name: image, index })}
                     animate={{ rotateY: flippedIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.8 }}
                     whileHover={{ scale: 1.05 }}
@@ -56,7 +91,7 @@ const ImageGrid: React.FC = () => {
                     {/* Back Side */}
                     <div style={{ ...styles.face, ...styles.back }}>
                         <div style={styles.result}>
-                            {delayedResultIndex === index ? "Result" : ""}
+                            {delayedResultIndex === index ? response : ""}
                         </div>
                     </div>
                 </motion.div>

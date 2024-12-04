@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { data as importedData } from "../data/output"; // Import data
 import ImageGrid from "./content";
-
-const headers = importedData[0];
 
 const ShowRow: React.FC = () => {
     const [isDarkMode, setIsDarkMode] = useState(
         window.matchMedia("(prefers-color-scheme: dark)").matches
     );
-
-    const [response, setResponse] = useState<string | null>(null);
-
     useEffect(() => {
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -22,37 +16,11 @@ const ShowRow: React.FC = () => {
         return () => mediaQuery.removeEventListener("change", handleChange);
     }, []);
 
-    const [selectedValue, setSelectedValue] = useState<number>(1);
-
-    const handleChange = (value: number) => setSelectedValue(value);
-
-    // const handleFormSubmit = (jsonData: string) => sendToAPI(jsonData);
-    const handleFormSubmit = async (jsonData: string) => {
-        try {
-            // Assuming you have an API endpoint to handle the request
-            const res = await fetch("http://127.0.0.1:5000/predict", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: jsonData,
-            });
-
-            const data = await res.json();
-
-            // Update the response state with the result from the API
-            setResponse(data.prediction); // Assuming the API returns a field named `prediction`
-        } catch (error) {
-            console.error("Error submitting data:", error);
-            setResponse("Error occurred"); // In case of error
-        }
-    };
-
     const getBorderColor = () => (isDarkMode ? "gray" : "black");
 
     return (
         <div>
-            <h3>Select an image</h3>
+            <h3>Please select an image</h3>
             <ImageGrid />
         </div>
     );
