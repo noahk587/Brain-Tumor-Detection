@@ -1,42 +1,90 @@
-from flask import Flask, request, render_template, jsonify
-import joblib
-import pandas as pd
-from flask_cors import CORS
+from flask import Flask, request, jsonify
+import pickle
+import numpy as np
 
-app = Flask(__name__)
+app = Flask(name)
 
-# Enable CORS for the app, allowing requests from specific origins
-CORS(app, resources={r"/predict": {"origins": "http://localhost:*"}})
+Load the pickle file (e.g., a trained ML model)
+Make sure to upload this pickle file along with your backend when deploying to AWS
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
-# Load the pre-trained model (update the path to your model file)
-model = joblib.load(r'RFmodel.pkl')  # Replace with the correct model path
-
-
-# Route for rendering the form in the frontend
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return "Flask API is running."
 
-
-# Route to handle API call for prediction
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get data from the POST request
-        data = request.json
+        # Ensure the request has JSON data
+        if not request.isjson:
+            return jsonify({"error": "Request must be JSON"}), 400
 
-        # Create a DataFrame from the received data
-        df = pd.DataFrame(data)
+Get image data (or any other data) from the request
+        data = request.getjson()
 
-        # Make the prediction using the loaded model
-        prediction = model.predict(df)
+        # Extract features or image processing (mocked for demonstration)
+        imagedata = data.get('imagedata', None)
+        if image_data is None:
+            return jsonify({"error": "No image data provided"}), 400
 
-        # Return the prediction result
-        return jsonify({'prediction': int(prediction[0])})
+Mocked feature processing from image data
+Replace with actual image preprocessing logic if needed
+        features = np.array(image_data).reshape(1, -1)
+
+Predict using the loaded model
+        prediction = model.predict(features)
+
+        # Return prediction result
+        return jsonify({"prediction": prediction.tolist()})
 
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({"error": str(e)}), 500
 
+if __name == '__main':
+    app.run(debug=True)
+from flask import Flask, request, jsonify
+import pickle
+import numpy as np
 
-if __name__ == '__main__':
+app = Flask(name)
+
+Load the pickle file (e.g., a trained ML model)
+Make sure to upload this pickle file along with your backend when deploying to AWS
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+@app.route('/')
+def home():
+    return "Flask API is running."
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Ensure the request has JSON data
+        if not request.isjson:
+            return jsonify({"error": "Request must be JSON"}), 400
+
+Get image data (or any other data) from the request
+        data = request.getjson()
+
+        # Extract features or image processing (mocked for demonstration)
+        imagedata = data.get('imagedata', None)
+        if image_data is None:
+            return jsonify({"error": "No image data provided"}), 400
+
+Mocked feature processing from image data
+Replace with actual image preprocessing logic if needed
+        features = np.array(image_data).reshape(1, -1)
+
+Predict using the loaded model
+        prediction = model.predict(features)
+
+        # Return prediction result
+        return jsonify({"prediction": prediction.tolist()})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name == '__main':
     app.run(debug=True)
