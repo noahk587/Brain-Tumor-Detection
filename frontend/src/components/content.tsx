@@ -46,7 +46,7 @@ const ImageGrid: React.FC = () => {
     };
     const handleFormSubmit = async (jsonData: Payload) => {
         try {
-            console.log("Sent API call");
+            console.log("Sent API call: ", jsonData);
             let body = JSON.stringify(jsonData);
             // Assuming you have an API endpoint to handle the request
             const res = await fetch("http://127.0.0.1:5000/predict", {
