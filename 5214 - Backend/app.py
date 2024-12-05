@@ -7,7 +7,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Load the pickle file (update 'model.pkl' to your actual pickle file path)
-with open('model.pkl', 'rb') as f:
+with open('vgg_16_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 def preprocess_image(image):
@@ -19,6 +19,10 @@ def preprocess_image(image):
     image_array = np.array(image)
     image_array = image_array / 255.0  # Normalize if needed
     return image_array
+
+@app.route('/')
+def home():
+    return "Welcome to the Brain Tumor Detection API!"
 
 @app.route('/predict', methods=['POST'])
 def predict():
