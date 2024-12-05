@@ -14,11 +14,24 @@ def preprocess_image(image):
     """
     Function to preprocess the image for the model
     """
-    # Resize or normalize the image as per model requirements
-    image = image.resize((128, 128))  # Example size, update to match your model
+    # Resize the image to match model input dimensions
+    image = image.resize((128, 128))  # Resize to (128, 128)
+    
+    # Convert the image to a NumPy array
     image_array = np.array(image)
-    image_array = image_array / 255.0  # Normalize if needed
+    
+    # Ensure the image has 3 color channels (RGB)
+    if image_array.shape[-1] != 3:
+        image_array = np.stack([image_array] * 3, axis=-1)  # Add RGB channels if missing
+    
+    # Normalize the image (scale pixel values to [0, 1])
+    image_array = image_array / 255.0
+    
+    # Add a batch dimension (model expects input shape of (None, 128, 128, 3))
+    image_array = np.expand_dims(image_array, axis=0)
+    
     return image_array
+
 
 @app.route('/')
 def home():
@@ -41,7 +54,6 @@ def predict():
     
     # Preprocess the image
     processed_image = preprocess_image(image)
-    processed_image = processed_image.flatten().reshape(1, -1)  # Flatten for model if needed
 
     # Get prediction from the model
     try:
