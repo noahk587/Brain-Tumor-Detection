@@ -5,15 +5,23 @@ const images = import.meta.glob("../../assets/images/*.{jpg,png,tif}", {
 });
 
 // Convert module values to string paths and pair them with dummy File objects
-const imagePaths = Object.values(images).map((mod, index) => {
-    const path =
-        typeof mod === "string" ? mod : (mod as { default: string }).default;
-    const file = new File([`Dummy Content ${index}`], `image${index}.jpg`, {
-        type: "image/jpeg",
-    }); // Mock File object
-    return { path, file };
-});
+const imagePaths = await Promise.all(
+    Object.values(images).map(async (mod, index) => {
+        const path =
+            typeof mod === "string"
+                ? mod
+                : (mod as { default: string }).default;
 
+        // Fetch the image to get its binary content
+        const response = await fetch(path);
+        const blob = await response.blob();
+
+        // Create a File object from the blob
+        const file = new File([blob], `image${index}.jpg`, { type: blob.type });
+
+        return { path, file };
+    })
+);
 console.log(imagePaths); // Check the loaded image paths
 const ImageGrid: React.FC = () => {
     const [flippedIndex, setFlippedIndex] = useState<number | null>(null); // Track the currently flipped image
@@ -58,7 +66,7 @@ const ImageGrid: React.FC = () => {
             // Prepare form data for the API request
             const formData = new FormData();
             formData.append("index", jsonData.index.toString());
-            formData.append("image", jsonData.image, "uploaded_image.jpg");
+            formData.append("image", jsonData.image, jsonData.name);
 
             // Assuming you have an API endpoint to handle the request
             const res = await fetch("http://127.0.0.1:5000/predict", {
@@ -66,7 +74,7 @@ const ImageGrid: React.FC = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body,
+                body: formData,
             });
 
             const data = await res.json();
@@ -82,15 +90,15 @@ const ImageGrid: React.FC = () => {
 
     return (
         <div style={styles.grid}>
-            {imagePaths.map((image, index) => (
+            {imagePaths.map(({ path, file }, index) => (
                 <motion.div
                     key={index}
                     style={styles.card}
                     onClick={() =>
                         handleFlip({
-                            name: image.path,
+                            name: path,
                             index,
-                            image: image.file,
+                            image: file,
                         })
                     }
                     animate={{ rotateY: flippedIndex === index ? 180 : 0 }}
@@ -100,7 +108,7 @@ const ImageGrid: React.FC = () => {
                     {/* Front Side */}
                     <div style={{ ...styles.face, ...styles.front }}>
                         <img
-                            src={image.path}
+                            src={path}
                             alt={`image-${index}`}
                             style={styles.image}
                         />
