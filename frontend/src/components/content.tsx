@@ -79,11 +79,15 @@ const ImageGrid: React.FC = () => {
                 body: formData, // Don't set headers; fetch sets correct Content-Type for FormData
             });
 
+            console.log("FINISHED FETCH SUCCESSFUL!");
+
             if (!res.ok) {
                 throw new Error(`Failed to fetch. Status: ${res.status}`);
             }
 
+            console.log("FINISHED FETCH SUCCESSFUL 2!");
             const result = await res.json();
+            console.log("FINISHED FETCH SUCCESSFUL 3!");
             console.log("API Response: ", result);
         } catch (error) {
             console.error("Error during API call: ", error);
