@@ -4,10 +4,15 @@ const images = import.meta.glob("../../assets/images/*.{jpg,png,tif}", {
     eager: true,
 });
 
-// Convert module values to string paths
-const imagePaths = Object.values(images).map((mod) =>
-    typeof mod === "string" ? mod : (mod as { default: string }).default
-);
+// Convert module values to string paths and pair them with dummy File objects
+const imagePaths = Object.values(images).map((mod, index) => {
+    const path =
+        typeof mod === "string" ? mod : (mod as { default: string }).default;
+    const file = new File([`Dummy Content ${index}`], `image${index}.jpg`, {
+        type: "image/jpeg",
+    }); // Mock File object
+    return { path, file };
+});
 
 console.log(imagePaths); // Check the loaded image paths
 const ImageGrid: React.FC = () => {
@@ -43,11 +48,18 @@ const ImageGrid: React.FC = () => {
     type Payload = {
         name: string;
         index: number;
+        image: File; // Add the image as a File type
     };
     const handleFormSubmit = async (jsonData: Payload) => {
         try {
             console.log("Sent API call: ", jsonData);
             let body = JSON.stringify(jsonData);
+
+            // Prepare form data for the API request
+            const formData = new FormData();
+            formData.append("index", jsonData.index.toString());
+            formData.append("image", jsonData.image, "uploaded_image.jpg");
+
             // Assuming you have an API endpoint to handle the request
             const res = await fetch("http://127.0.0.1:5000/predict", {
                 method: "POST",
@@ -59,7 +71,7 @@ const ImageGrid: React.FC = () => {
 
             const data = await res.json();
 
-            console.log("Received API call");
+            console.log("Received API call (RESP): ", res);
             // Update the response state with the result from the API
             setResponse(data.prediction); // Assuming the API returns a field named `prediction`
         } catch (error) {
@@ -74,7 +86,13 @@ const ImageGrid: React.FC = () => {
                 <motion.div
                     key={index}
                     style={styles.card}
-                    onClick={() => handleFlip({ name: image, index })}
+                    onClick={() =>
+                        handleFlip({
+                            name: image.path,
+                            index,
+                            image: image.file,
+                        })
+                    }
                     animate={{ rotateY: flippedIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.8 }}
                     whileHover={{ scale: 1.05 }}
@@ -82,7 +100,7 @@ const ImageGrid: React.FC = () => {
                     {/* Front Side */}
                     <div style={{ ...styles.face, ...styles.front }}>
                         <img
-                            src={image}
+                            src={image.path}
                             alt={`image-${index}`}
                             style={styles.image}
                         />
