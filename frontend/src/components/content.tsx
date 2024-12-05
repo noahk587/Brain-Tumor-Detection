@@ -61,30 +61,32 @@ const ImageGrid: React.FC = () => {
     const handleFormSubmit = async (jsonData: Payload) => {
         try {
             console.log("Sent API call: ", jsonData);
-            let body = JSON.stringify(jsonData);
-
-            // Prepare form data for the API request
             const formData = new FormData();
+
+            // Append fields to FormData
             formData.append("index", jsonData.index.toString());
             formData.append("image", jsonData.image, jsonData.name);
 
-            // Assuming you have an API endpoint to handle the request
+            // Log the contents of FormData
+            console.log("FormData being sent:");
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+
+            // Send the FormData to the API endpoint
             const res = await fetch("http://127.0.0.1:5000/predict", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: formData,
+                body: formData, // Don't set headers; fetch sets correct Content-Type for FormData
             });
 
-            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(`Failed to fetch. Status: ${res.status}`);
+            }
 
-            console.log("Received API call (RESP): ", res);
-            // Update the response state with the result from the API
-            setResponse(data.prediction); // Assuming the API returns a field named `prediction`
+            const result = await res.json();
+            console.log("API Response: ", result);
         } catch (error) {
-            console.error("Error submitting data:", error);
-            setResponse("Error occurred"); // In case of error
+            console.error("Error during API call: ", error);
         }
     };
 
