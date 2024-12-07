@@ -3,8 +3,10 @@ import pickle
 from PIL import Image
 import io
 import numpy as np
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Load the pickle file (update 'model.pkl' to your actual pickle file path)
 with open('vgg_16_model.pkl', 'rb') as f:

@@ -48,9 +48,10 @@ const ImageGrid: React.FC = () => {
     };
 
     const handleChange = (value: number) => setSelectedValue(value);
-
     const [response, setResponse] = useState<string | null>(null);
+    const [confidence, setConfidence] = useState<string | null>(null);
     const [selectedValue, setSelectedValue] = useState<number>(1);
+
     // const handleFormSubmit = (jsonData: string) => sendToAPI(jsonData);
 
     type Payload = {
@@ -60,6 +61,7 @@ const ImageGrid: React.FC = () => {
     };
     const handleFormSubmit = async (jsonData: Payload) => {
         try {
+            
             console.log("Sent API call: ", jsonData);
             const formData = new FormData();
 
@@ -85,10 +87,18 @@ const ImageGrid: React.FC = () => {
                 throw new Error(`Failed to fetch. Status: ${res.status}`);
             }
 
-            console.log("FINISHED FETCH SUCCESSFUL 2!");
             const result = await res.json();
-            console.log("FINISHED FETCH SUCCESSFUL 3!");
+            const roundedPrediction = parseFloat(Number(result.prediction).toFixed(6));
+
             console.log("API Response: ", result);
+
+            const diagnosis = roundedPrediction < 0.5 ? "No Tumor" : "Tumor";
+
+        // Calculate confidence percentage (absolute value)
+            const confidence = Math.abs(roundedPrediction - 0.5) * 2 * 100;
+            setConfidence(confidence.toFixed(2));
+            setResponse(diagnosis);
+
         } catch (error) {
             console.error("Error during API call: ", error);
         }
@@ -123,7 +133,11 @@ const ImageGrid: React.FC = () => {
                     {/* Back Side */}
                     <div style={{ ...styles.face, ...styles.back }}>
                         <div style={styles.result}>
-                            {delayedResultIndex === index ? response : ""}
+                            Prediction: {delayedResultIndex === index ? response : ""}
+                            <br />
+                            Confidence: {delayedResultIndex === index ? confidence : ""}
+                            <br />
+                            Actual: {delayedResultIndex === index ? response : ""}
                         </div>
                     </div>
                 </motion.div>
@@ -132,6 +146,34 @@ const ImageGrid: React.FC = () => {
     );
 };
 const styles: { [key: string]: React.CSSProperties } = {
+    result: {
+        fontSize: "14px", // Smaller text size
+        fontWeight: "bold",
+        color: "#333",
+        textAlign: "center",
+        wordWrap: "break-word",
+        maxWidth: "90%",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        marginBottom: "10px",
+    },
+    confidence: {
+        fontSize: "12px", // Smaller text size for confidence
+        fontWeight: "normal",
+        color: "#555",
+        textAlign: "center",
+        wordWrap: "break-word",
+        maxWidth: "90%",
+    },
+    back: {
+        transform: "rotateY(180deg)",
+        display: "flex",
+        flexDirection: "column", // Arrange content vertically
+        alignItems: "center", // Center-align content horizontally
+        justifyContent: "center", // Center-align content vertically
+        backgroundColor: "#eee",
+        padding: "10px", // Add padding to ensure spacing inside the card
+    },
     grid: {
         display: "grid",
         gridTemplateColumns: "repeat(5, 1fr)", // Limit to 5 columns per row
@@ -160,22 +202,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     front: {
         transform: "rotateY(0deg)",
     },
-    back: {
-        transform: "rotateY(180deg)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#eee",
-    },
     image: {
         width: "100%",
         height: "100%",
         objectFit: "cover",
-    },
-    result: {
-        fontSize: "16px",
-        fontWeight: "bold",
-        color: "#333",
     },
 };
 
