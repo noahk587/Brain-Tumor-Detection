@@ -14,10 +14,10 @@ Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flas
 2. **Move the `vgg_16_model.pkl` file into the `backend` folder**:
 
     - Make sure the `vgg_16_model.pkl` file (included in the project zip) is placed in the `backend` folder.
-3. With the frontend as the working directory,
+3. With the frontend as the working directory, run:
    ```bash
    npm i && npm run dev
-4. In a new terminal window with the backend as the working directory,
+4. In a new terminal window with the backend as the working directory, run:
    ```bash
    flask run
 
