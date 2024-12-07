@@ -4,6 +4,24 @@ This project aims to create an image recognition model for the early detection o
 ## Web Deployment
 Our web deployment can be accessed by the following link:  
 https://main.dei0a255zwqfs.amplifyapp.com/
+
+## Using a Local Host
+Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flask_cors Python packages need to be installed.
+### macOS/Linux
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/UpLiftL1f3/CSCE5214_LineChasers.git](https://github.com/noahk587/Brain-Tumor-Detection.git
+    cd Brain-Tumor-Detection.git
+2. **Move the `vgg_16_model.pkl` file into the `backend` folder**:
+
+    - Make sure the `vgg_16_model.pkl` file (included in the project zip) is placed in the `backend` folder.
+3. With the frontend as the working directory,
+   ```bash
+   npm i && npm run dev
+4. In a new terminal window with the backend as the working directory,
+   ```bash
+   flash run
+
 ### Repository for Deployment
 A second repository was needed for the deployment becasue of ownership requirment for a repository in order to deploy. The link to that respoitory can be accessed below:  
 https://github.com/Dhruvil6/BrainTunor5214
