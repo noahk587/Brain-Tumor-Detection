@@ -20,7 +20,7 @@ Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flas
    npm i && npm run dev
 4. In a new terminal window with the backend as the working directory,
    ```bash
-   flash run
+   flask run
 
 ### Repository for Deployment
 A second repository was needed for the deployment becasue of ownership requirment for a repository in order to deploy. The link to that respoitory can be accessed below:  
