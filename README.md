@@ -7,7 +7,6 @@ https://main.dei0a255zwqfs.amplifyapp.com/
 
 ## Using a Local Host
 Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flask_cors Python packages need to be installed.
-### macOS/Linux
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/noahk587/Brain-Tumor-Detection.git
