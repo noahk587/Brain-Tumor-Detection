@@ -10,7 +10,7 @@ Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flas
 ### macOS/Linux
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/UpLiftL1f3/CSCE5214_LineChasers.git](https://github.com/noahk587/Brain-Tumor-Detection.git
+    git clone https://github.com/noahk587/Brain-Tumor-Detection.git
     cd Brain-Tumor-Detection.git
 2. **Move the `vgg_16_model.pkl` file into the `backend` folder**:
 
