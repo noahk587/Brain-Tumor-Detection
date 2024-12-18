@@ -4,7 +4,7 @@ This project aims to create an image recognition model for the early detection o
 
 
 ## Using a Local Host
-Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flask_cors Python packages need to be installed.
+Node.js is needed to run on local host. Additionaly, numpy, io, PIL, flask, flask_cors packages in Python need to be installed.
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/noahk587/Brain-Tumor-Detection.git
